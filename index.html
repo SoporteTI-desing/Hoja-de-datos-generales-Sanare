@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hoja de datos generales - SANARÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-light: #f5eee7;
+      --card-bg: #fdf9f5;
+      --accent: #c7a18a;
+      --accent-soft: rgba(199, 161, 138, 0.25);
+      --text-main: #2b1a14;
+      --text-soft: #7b6a62;
+      --border-soft: #e2d4c9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #fdf5ee 0, #f3e7dd 40%, #e4d4c6 100%);
+      color: var(--text-main);
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 30px 10px;
+    }
+    .shell {
+      width: 100%;
+      max-width: 1100px;
+      background: linear-gradient(135deg, rgba(199,161,138,0.18), rgba(255,255,255,0.95));
+      border-radius: 24px;
+      padding: 1px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.16), 0 0 0 1px rgba(255,255,255,0.8);
+    }
+    
+    /* Contenedor temporal para exportar a PDF en dos hojas */
+    .pdf-export-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 0;
+      margin: 0;
+    }
+    .pdf-export-card {
+      transform: scale(0.8);
+      transform-origin: top center;
+      margin: 0;
+    }
+    .pdf-export-card .actions {
+      display: none !important;
+    }
+.shell.pdf-export {
+      /* Modo compacto para exportar PDF: reducimos todavía más padding y tipografías */
+      padding: 2px;
+    }
+    .shell.pdf-export .card {
+      padding: 8px 8px 10px;
+    }
+    .shell.pdf-export .section {
+      padding: 3px 3px 3px;
+      margin-bottom: 2px;
+    }
+    .shell.pdf-export .section-info-medica {
+      margin-top: 6px;
+    }
+.shell.pdf-export .section-title {
+      font-size: 0.52rem;
+    }
+    .shell.pdf-export header h1 {
+      font-size: 0.6rem;
+    }
+    .shell.pdf-export header span.subtitle {
+      font-size: 0.5rem;
+    }
+    .shell.pdf-export label,
+    .shell.pdf-export .chip,
+    .shell.pdf-export .hint {
+      font-size: 0.46rem;
+    }
+    .shell.pdf-export input[type="text"],
+    .shell.pdf-export input[type="email"],
+    .shell.pdf-export input[type="date"],
+    .shell.pdf-export input[type="number"],
+    .shell.pdf-export input[type="tel"],
+    .shell.pdf-export textarea,
+    .shell.pdf-export select {
+      font-size: 0.46rem;
+      padding: 1px 1px;
+    }
+
+    body.pdf-export-mode {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .shell.pdf-export .actions {
+      display: none !important;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.95) 0, #f8f1ea 40%);
+      border-radius: 22px;
+      padding: 26px 22px 30px;
+      border: 1px solid rgba(255,255,255,0.9);
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 16px;
+    }
+    header img {
+      height: 110px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
+    }
+    header .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    header span.subtitle {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+    .badge {
+      margin-left: auto;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent-soft);
+      color: var(--accent);
+      background: #fff;
+      white-space: nowrap;
+    }
+    form {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .section {
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      background: #fbf5ef;
+      padding: 16px 16px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .section-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: linear-gradient(to right, var(--accent), transparent);
+      opacity: 0.8;
+    }
+    .section-note {
+      font-size: 0.74rem;
+      color: var(--text-soft);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.8rem;
+    }
+    label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    input[type="number"],
+    input[type="tel"],
+    textarea,
+    select {
+      border-radius: 10px;
+      border: 1px solid #d7c7bb;
+      background: #fdf9f5;
+      color: var(--text-main);
+      padding: 8px 10px;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    textarea { min-height: 70px; resize: vertical; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(199,161,138,0.4);
+      background: #fff;
+    }
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 4px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--text-main);
+    }
+    .chip input {
+      accent-color: var(--accent);
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .page-break-otros-padecimientos {
+      page-break-before: auto;
+      break-before: auto;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .section-info-medica {
+      page-break-before: always;
+      break-before: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .hidden {
+      display: none;
+    }
+
+.actions {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .primary-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 18px;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #e4bfa6, #c39a85);
+      color: #2b1a14;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+    }
+    .primary-btn:hover { filter: brightness(1.05); }
+    .primary-btn:active { transform: translateY(1px); box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+
+    .secondary-btn {
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      padding: 9px 18px;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: #fff;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .hint {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+    }
+
+    /* Evitar que la sección de otros datos se parta en impresión
+       y forzarla a iniciar en una nueva hoja (tercera página). */
+    .section-otros {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .shell {
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .card {
+        border-radius: 0;
+        background: #fff;
+        color: #000;
+      }
+      header img {
+        filter: none;
+      }
+      .primary-btn, .badge {
+        display: none !important;
+      }
+      a {
+        color: #000;
+      }
+      /* Forzar que 'Otros datos' comience en una nueva página */
+    }
+  </style>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 4mm;
+    }
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .shell {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+        
+        
+      }
+      .card {
+        border-radius: 0;
+        background: #fff;
+        color: #000;
+        padding: 10px 8px 14px;
+      }
+      header {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+      }
+      header img {
+        filter: none;
+        height: 80px;
+      }
+      header h1 {
+        font-size: 0.8rem;
+      }
+      header span.subtitle {
+        font-size: 0.6rem;
+      }
+      form {
+        gap: 8px;
+      }
+      .section {
+        padding: 8px 8px 6px;
+        margin-bottom: 4px;
+      }
+      .section-title {
+        font-size: 0.65rem;
+      }
+      label {
+        font-size: 0.55rem;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="date"],
+      input[type="number"],
+      input[type="tel"],
+      textarea,
+      select {
+        font-size: 0.55rem;
+        padding: 2px 3px;
+      }
+      .options-row {
+        gap: 4px 8px;
+      }
+      .chip {
+        font-size: 0.58rem;
+      }
+      .hint {
+        font-size: 0.6rem;
+      }
+      .primary-btn,
+      .secondary-btn,
+      .badge {
+        display: none !important;
+      }
+      a {
+        color: #000;
+      }
+            .page-break-otros-padecimientos {
+        page-break-before: always;
+        break-before: page;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .section-info-medica {
+        page-break-before: auto;
+        break-before: auto;
+      }
+.section-otros {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+  
+  </style>
+</head>
+<body>
+  <div class="shell" id="sanare-form-root">
+    <div class="card">
+      <header>
+        <img src="SANARE_logo.png" alt="SANARÉ - Clínica de Infusión" />
+        <div class="title-block">
+          <h1>Hoja de datos generales</h1>
+          <span class="subtitle">SANARÉ · Clínica de Infusión</span>
+        </div>
+        <div class="badge">Uso interno</div>
+      </header>
+
+      <form>
+        <!-- DATOS GENERALES -->
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">Datos generales del paciente</div>
+          </div>
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="fecha_ingreso">Fecha de ingreso</label>
+              <input type="date" id="fecha_ingreso" name="fecha_ingreso">
+            </div>
+            <div class="field">
+              <label for="folio">Número de expediente</label>
+              <input type="text" id="folio" name="folio">
+            </div>
+            <div class="field">
+              <label for="sede">Sede</label>
+              <select id="sede" name="sede">
+                <option value="">Seleccionar sede…</option>
+                <option value="Narvarte">Narvarte</option>
+                <option value="Toluca">Toluca</option>
+                <option value="Morelia">Morelia</option>
+              </select>
+            </div>
+            <div class="field full-width">
+              <label>¿Quién lo recomienda con nosotros o por qué medio nos conoció?</label>
+              <div class="options-row">
+                <label class="chip"><input type="checkbox" name="recomienda" value="medico"> Médico</label>
+                <label class="chip"><input type="checkbox" name="recomienda" value="kam"> KAM</label>
+                <label class="chip"><input type="checkbox" name="recomienda" value="recomendacion"> Recomendación</label>
+                <label class="chip"><input type="checkbox" name="recomienda" value="facebook"> Facebook</label>
+                <label class="chip"><input type="checkbox" name="recomienda" value="instagram"> Instagram</label>
+                <label class="chip">
+                  <input type="checkbox" name="recomienda" value="otro">
+                  Otro (especificar)
+                </label>
+              </div>
+              <input type="text" name="recomienda_otro" placeholder="Especifique, si aplica…">
+            </div>
+            <div class="field">
+              <label for="medico_tratante">Médico tratante</label>
+              <input type="text" id="medico_tratante" name="medico_tratante">
+            </div>
+            <div class="field full-width">
+              <label for="nombre_paciente">Nombre completo del paciente</label>
+              <input type="text" id="nombre_paciente" name="nombre_paciente">
+            </div>
+            <div class="field">
+              <label for="fecha_nacimiento">Fecha de nacimiento</label>
+              <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+            </div>
+            <div class="field">
+              <label for="edad">Edad</label>
+              <input type="number" id="edad" name="edad" min="0">
+            </div>
+            <div class="field">
+              <label>Sexo</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="sexo" value="masculino"> Masculino</label>
+                <label class="chip"><input type="radio" name="sexo" value="femenino"> Femenino</label>
+              </div>
+            </div>
+            <div class="field">
+              <label>Nacionalidad</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="nacionalidad" value="mexicano"> Mexicano</label>
+                <label class="chip"><input type="radio" name="nacionalidad" value="extranjero"> Extranjero</label>
+              </div>
+            </div>
+            <div class="field full-width">
+              <label for="correo">Correo electrónico</label>
+              <input type="email" id="correo" name="correo">
+            </div>
+            <div class="field">
+              <label>Estado civil</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="estado_civil" value="soltero"> Soltero</label>
+                <label class="chip"><input type="radio" name="estado_civil" value="casado"> Casado</label>
+                <label class="chip"><input type="radio" name="estado_civil" value="viudo"> Viudo</label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DOMICILIO Y CONTACTO -->
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">Domicilio y contacto</div>
+          </div>
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="calle_num">Calle y número de domicilio</label>
+              <input type="text" id="calle_num" name="calle_num">
+            </div>
+            <div class="field">
+              <label for="colonia">Colonia</label>
+              <input type="text" id="colonia" name="colonia">
+            </div>
+            <div class="field">
+              <label for="cp">Código postal</label>
+              <input type="text" id="cp" name="cp">
+            </div>
+            <div class="field">
+              <label for="celular">Celular</label>
+              <input type="tel" id="celular" name="celular">
+            </div>
+            <div class="field">
+              <label for="telefono_casa">Teléfono de casa</label>
+              <input type="tel" id="telefono_casa" name="telefono_casa">
+            </div>
+          </div>
+        </section>
+
+        <!-- INFORMACIÓN MÉDICA -->
+        <section class="section section-info-medica">
+          <div class="section-header">
+            <div class="section-title">Información médica</div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="tipo_sangre">Tipo de sangre</label>
+              <input type="text" id="tipo_sangre" name="tipo_sangre">
+            </div>
+            <div class="field full-width">
+              <label for="diagnostico">Diagnóstico</label>
+              <textarea id="diagnostico" name="diagnostico"></textarea>
+            </div>
+            <div class="field full-width">
+              <label>Programa de soporte a paciente</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="psp" value="si"> Sí</label>
+                <label class="chip"><input type="radio" name="psp" value="no"> No</label>
+              </div>
+              <input type="text" name="psp_cual" placeholder="Si respondió SÍ, ¿cuál?">
+            </div>
+            <div class="field full-width page-break-otros-padecimientos">
+              <label for="otros_padecimientos">¿Tiene algún otro padecimiento?</label>
+              <textarea id="otros_padecimientos" name="otros_padecimientos"></textarea>
+            </div>
+            <div class="field full-width">
+              <label for="medicamentos_toma">¿Qué medicamentos toma?</label>
+              <textarea id="medicamentos_toma" name="medicamentos_toma"></textarea>
+            </div>
+            <div class="field full-width">
+              <label>¿Es alérgico? Por favor especifique</label>
+              <div class="options-row">
+                <label class="chip"><input type="checkbox" name="alergias" value="alimentos"> Alimentos</label>
+                <label class="chip"><input type="checkbox" name="alergias" value="medicamentos"> Medicamentos</label>
+                <label class="chip"><input type="checkbox" name="alergias" value="otros"> Otros</label>
+              </div>
+              <input type="text" name="alergias_otros" placeholder="Detalle las alergias, si aplica…">
+            </div>
+          </div>
+        </section>
+
+        <!-- RELIGIÓN, PAGO, CENTRO -->
+        <section class="section section-otros">
+          <div class="section-header">
+            <div class="section-title">Otros datos</div>
+          </div>
+          <div class="form-grid">
+            <div class="field full-width">
+              <label>Religión</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="religion" value="catolica"> Católica</label>
+                <label class="chip"><input type="radio" name="religion" value="cristiana"> Cristiana</label>
+                <label class="chip"><input type="radio" name="religion" value="evangelico"> Evangélico</label>
+                <label class="chip"><input type="radio" name="religion" value="ateismo"> Ateísmo</label>
+              </div>
+            </div>
+            <div class="field full-width">
+              <label for="nombre_acompanante">Nombre del acompañante</label>
+              <input type="text" id="nombre_acompanante" name="nombre_acompanante">
+            </div>
+            <div class="field">
+              <label for="cel_acompanante">Contacto del acompañante</label>
+              <input type="tel" id="contacto_acompanante" name="contacto_acompanante">
+            </div>
+            <div class="field">
+              <label>Forma de pago</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="forma_pago" value="bolsillo"> Pago de bolsillo</label>
+                <label class="chip"><input type="radio" name="forma_pago" value="aseguradora"> Aseguradora</label>
+              </div>
+            </div>
+            <div class="field full-width hidden" id="aseguradora-field">
+              <label for="aseguradora">Aseguradora</label>
+              <select id="aseguradora" name="aseguradora">
+                <option value="">Seleccionar aseguradora…</option>
+                <option value="HSBC">HSBC</option>
+                <option value="AXA">AXA</option>
+                <option value="BBVA">BBVA</option>
+                <option value="ZURICH">ZURICH</option>
+                <option value="INDEP">INDEP</option>
+                <option value="Seguros SURA">Seguros SURA</option>
+                <option value="LF">LF</option>
+                <option value="INDEEP">INDEEP</option>
+                <option value="BANOBRAS">BANOBRAS</option>
+                <option value="PAN AMERICAN MEXICO">PAN AMERICAN MEXICO</option>
+                <option value="BEST DOCTOR INSURANCE">BEST DOCTOR INSURANCE</option>
+                <option value="PREVEM SEGUROS">PREVEM SEGUROS</option>
+                <option value="OMA">OMA</option>
+                <option value="BANRURAL">BANRURAL</option>
+                <option value="METLIFE">METLIFE</option>
+              </select>
+            </div>
+        </section>
+
+        <!-- AVISO DE PRIVACIDAD -->
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">Aviso de privacidad y anexos</div>
+          </div>
+          <div class="form-grid">
+            <div class="field full-width">
+              <p class="hint">
+                Favor de leer nuestro aviso de privacidad en
+                <a href="https://soporteti-desing.github.io/Aviso-de-privacidad/" target="_blank" rel="noopener noreferrer">
+                  este enlace
+                </a>.
+              </p>
+            </div>
+            <div class="field full-width">
+              <label class="chip">
+                <input type="checkbox" id="acepto_aviso" name="acepto_aviso">
+                Acepto que he leído y estoy de acuerdo con el aviso de privacidad.
+              </label>
+            </div>
+            <div class="field full-width">
+              <p class="hint">
+                Anexar copia de INE del paciente y sus últimos laboratorios:
+                <a href="https://drive.google.com/drive/folders/1FN4Ekt45XxdoD78MSEb1Wybt0joKWh8A" target="_blank" rel="noopener noreferrer">
+                  carpeta de carga en Google Drive
+                </a>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button type="button" class="secondary-btn" id="btn-print">Imprimir</button>
+          <button type="button" class="primary-btn" id="btn-download">Descargar PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Librería para generar PDF con nombre personalizado -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script>
+    (function() {
+      // Toggle de aseguradora según forma de pago
+      const radios = document.querySelectorAll('input[name="forma_pago"]');
+      const aseguradoraField = document.getElementById('aseguradora-field');
+      function updateFormaPago() {
+        const selected = Array.from(radios).find(r => r.checked);
+        if (selected && selected.value === 'aseguradora') {
+          aseguradoraField && aseguradoraField.classList.remove('hidden');
+        } else {
+          if (aseguradoraField) {
+            aseguradoraField.classList.add('hidden');
+            const sel = aseguradoraField.querySelector('select');
+            if (sel) sel.selectedIndex = 0;
+          }
+        }
+      }
+      if (radios.length) {
+        radios.forEach(r => r.addEventListener('change', updateFormaPago));
+        updateFormaPago();
+      }
+
+      // Botones de imprimir y descargar PDF
+      const root = document.getElementById('sanare-form-root');
+      const btnPrint = document.getElementById('btn-print');
+      const btnDownload = document.getElementById('btn-download');
+
+      if (btnPrint) {
+        btnPrint.addEventListener('click', function() {
+          window.print();
+        });
+      }
+
+      if (btnDownload && root && typeof html2pdf !== 'undefined') {
+        btnDownload.addEventListener('click', function() {
+          const folio = (document.getElementById('folio')?.value || '').trim() || 'sinexpediente';
+          const sede = (document.getElementById('sede')?.value || '').trim() || 'sinsede';
+          const fileName = 'Sanare_' + folio.replace(/\s+/g, '') + '_' + sede.replace(/\s+/g, '') + '.pdf';
+
+          // Asegurar que el formulario esté al inicio de la página
+          window.scrollTo(0, 0);
+
+          // Activar modo compacto para PDF
+          root.classList.add('pdf-export');
+          document.body.classList.add('pdf-export-mode');
+
+          const originalCard = root.querySelector('.card') || root;
+
+          // Crear un contenedor temporal centrado para el PDF
+          const pdfContainer = document.createElement('div');
+          pdfContainer.className = 'pdf-export-container';
+
+          // Clonar la tarjeta para no afectar la vista en pantalla
+          const pdfCard = originalCard.cloneNode(true);
+          pdfCard.classList.add('pdf-export-card');
+
+          pdfContainer.appendChild(pdfCard);
+          document.body.appendChild(pdfContainer);
+
+          const opt = {
+            margin:       [0, 0, 0, 0],
+            filename:     fileName,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css'] }
+          };
+
+          setTimeout(function() {
+            html2pdf().set(opt).from(pdfContainer).toPdf().get('pdf').then(function(pdf) {
+              // Eliminar página 3 (o cualquier extra) si existe
+              const totalPages = pdf.internal.getNumberOfPages();
+              if (totalPages > 2) {
+                pdf.deletePage(totalPages);
+              }
+            }).save().then(() => {
+            // Regresar al modo normal en pantalla
+            root.classList.remove('pdf-export');
+            document.body.classList.remove('pdf-export-mode');
+
+            // Eliminar contenedor temporal
+            document.body.removeChild(pdfContainer);
+          });
+          }, 50);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+
