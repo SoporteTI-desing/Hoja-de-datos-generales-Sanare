@@ -697,7 +697,7 @@
 
         <div class="actions">
           <button type="button" class="secondary-btn" id="btn-print">Imprimir</button>
-          <button type="button" class="primary-btn" id="btn-download">Descargar PDF</button>
+          <button type="button" class="primary-btn" id="btn-download">GUARDAR REGISTRO / DESCARGAR PDF</button>
         </div>
       </form>
     </div>
@@ -705,6 +705,28 @@
 
   <!-- Librería para generar PDF con nombre personalizado -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    // Parche para evitar errores de createPattern con imágenes/canvas de tamaño 0
+    (function() {
+      if (window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype && !CanvasRenderingContext2D.prototype.__sanarePatched) {
+        const originalCreatePattern = CanvasRenderingContext2D.prototype.createPattern;
+        CanvasRenderingContext2D.prototype.__sanarePatched = true;
+        CanvasRenderingContext2D.prototype.createPattern = function(image, repetition) {
+          try {
+            if (!image || image.width === 0 || image.height === 0) {
+              console.warn('createPattern ignorado por imagen/canvas sin tamaño válido', image);
+              return null;
+            }
+            return originalCreatePattern.call(this, image, repetition);
+          } catch (e) {
+            console.error('Error en createPattern parcheado:', e);
+            return null;
+          }
+        };
+      }
+    })();
+  </script>
+
 
   <script>
     (function() {
@@ -765,6 +787,19 @@
 
       if (btnDownload && root && typeof html2pdf !== 'undefined') {
         btnDownload.addEventListener('click', function() {
+
+          // Si la función de Firebase está disponible, guardamos EN PARALELO al PDF
+          if (typeof window.guardarRegistroEnFirebase === 'function') {
+            window.guardarRegistroEnFirebase()
+              .then(() => {
+                alert('Registro guardado correctamente');
+              })
+              .catch((e) => {
+                console.error('Error al guardar en Firebase desde botón', e);
+                alert('Error al guardar en Firebase: ' + (e.code || '') + '\n' + (e.message || ''));
+              });
+          }
+
           const folio = (document.getElementById('folio')?.value || '').trim() || 'sinexpediente';
           const sede = (document.getElementById('sede')?.value || '').trim() || 'sinsede';
           const fileName = 'Sanare_' + folio.replace(/\s+/g, '') + '_' + sede.replace(/\s+/g, '') + '.pdf';
@@ -818,6 +853,70 @@
       }
     })();
   </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+    // Configuración de Firebase proporcionada
+    const firebaseConfig = {
+      apiKey: "AIzaSyCN0IAE1kd0JbVPOJ-TL6GylUEF0svWqpA",
+      authDomain: "hoja-de-datos-generales-sanare.firebaseapp.com",
+      projectId: "hoja-de-datos-generales-sanare",
+      storageBucket: "hoja-de-datos-generales-sanare.firebasestorage.app",
+      messagingSenderId: "797101129248",
+      appId: "1:797101129248:web:1fa6246feb9802c7840645"
+    };
+
+    // Inicializar Firebase y Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.querySelector('form');
+    const btnDownload = document.getElementById('btn-download');
+
+    async function guardarRegistroEnFirebase() {
+      if (!form) return;
+
+      // Tomar todos los campos del formulario
+      const formData = new FormData(form);
+      const data = {};
+
+      for (const [key, value] of formData.entries()) {
+        // Permitir múltiples valores (por ejemplo, checkboxes)
+        if (data[key] !== undefined) {
+          if (!Array.isArray(data[key])) {
+            data[key] = [data[key]];
+          }
+          data[key].push(value);
+        } else {
+          data[key] = value;
+        }
+      }
+
+      // Asegurarnos de tener la sede
+      const sedeCampo = document.getElementById('sede');
+      const sede = (sedeCampo && sedeCampo.value) || data['sede'] || 'sinsede';
+      data.sede = sede || 'sinsede';
+
+      // Guardar fecha/hora de registro del sistema
+      data.creadoEn = serverTimestamp();
+
+      try {
+        // Colección por sede: registros_por_sede/{sede}/pacientes
+        const colRef = collection(db, 'registros_por_sede', data.sede, 'pacientes');
+        await addDoc(colRef, data);
+        console.log('Registro guardado en Firebase para la sede:', data.sede);
+      } catch (error) {
+        console.error('Error al guardar en Firebase', error);
+        throw error;
+      }
+    }
+
+    // Exponer función globalmente para poder usarla desde otros scripts
+    window.guardarRegistroEnFirebase = guardarRegistroEnFirebase;
+
+      </script>
 </body>
 </html>
 
