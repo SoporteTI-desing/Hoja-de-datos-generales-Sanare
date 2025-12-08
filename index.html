@@ -687,7 +687,7 @@
             <div class="field full-width">
               <p class="hint">
                 Anexar copia de INE del paciente y sus últimos laboratorios:
-                <a href="https://drive.google.com/drive/folders/1FN4Ekt45XxdoD78MSEb1Wybt0joKWh8A" target="_blank" rel="noopener noreferrer">
+                <a id="drive-link" href="https://drive.google.com/drive/folders/1FN4Ekt45XxdoD78MSEb1Wybt0joKWh8A" target="_blank" rel="noopener noreferrer">
                   carpeta de carga en Google Drive
                 </a>.
               </p>
@@ -711,6 +711,30 @@
       // Toggle de aseguradora según forma de pago
       const radios = document.querySelectorAll('input[name="forma_pago"]');
       const aseguradoraField = document.getElementById('aseguradora-field');
+
+      // Cambio dinámico del enlace de carga en Drive según la sede seleccionada
+      const sedeSelect = document.getElementById('sede');
+      const driveLink = document.getElementById('drive-link');
+      if (sedeSelect && driveLink) {
+        const defaultHref = driveLink.getAttribute('href') || '';
+
+        const driveLinksBySede = {
+          'Narvarte': 'https://drive.google.com/drive/folders/1PLgKv9CtqXYtTNzOSxIGb0wCowWZgyLE',
+          'Toluca': 'https://drive.google.com/drive/folders/1FN4Ekt45XxdoD78MSEb1Wybt0joKWh8A'
+          // Para otras sedes (por ejemplo Morelia) se utilizará el enlace por defecto
+        };
+
+        const updateDriveLink = () => {
+          const value = sedeSelect.value;
+          const href = driveLinksBySede[value] || defaultHref;
+          driveLink.setAttribute('href', href);
+        };
+
+        // Actualizar al cargar la página y cada vez que cambie la sede
+        updateDriveLink();
+        sedeSelect.addEventListener('change', updateDriveLink);
+      }
+
       function updateFormaPago() {
         const selected = Array.from(radios).find(r => r.checked);
         if (selected && selected.value === 'aseguradora') {
