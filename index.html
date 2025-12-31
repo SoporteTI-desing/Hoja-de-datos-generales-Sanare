@@ -542,7 +542,64 @@
           </div>
         </section>
 
-        <!-- DOMICILIO Y CONTACTO -->
+                <!-- RELIGIÓN, PAGO, CENTRO -->
+        <section class="section section-otros">
+          <div class="section-header">
+            <div class="section-title">Otros datos</div>
+          </div>
+          <div class="form-grid">
+            <div class="field full-width">
+              <label>Religión</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="religion" value="catolica"> Católica</label>
+                <label class="chip"><input type="radio" name="religion" value="cristiana"> Cristiana</label>
+                <label class="chip"><input type="radio" name="religion" value="evangelico"> Evangélico</label>
+                <label class="chip"><input type="radio" name="religion" value="ateismo"> Ateísmo</label>
+              </div>
+            </div>
+            <div class="field full-width">
+              <label for="ocupacion_paciente">Ocupación del paciente</label>
+              <input type="text" id="ocupacion_paciente" name="ocupacion_paciente">
+            </div>
+            <div class="field full-width">
+              <label for="nombre_acompanante">Nombre del acompañante</label>
+              <input type="text" id="nombre_acompanante" name="nombre_acompanante">
+            </div>
+            <div class="field">
+              <label for="cel_acompanante">Contacto del acompañante</label>
+              <input type="tel" id="contacto_acompanante" name="contacto_acompanante">
+            </div>
+            <div class="field">
+              <label>Forma de pago</label>
+              <div class="options-row">
+                <label class="chip"><input type="radio" name="forma_pago" value="bolsillo"> Pago de bolsillo</label>
+                <label class="chip"><input type="radio" name="forma_pago" value="aseguradora"> Aseguradora</label>
+              </div>
+            </div>
+            <div class="field full-width hidden" id="aseguradora-field">
+              <label for="aseguradora">Aseguradora</label>
+              <select id="aseguradora" name="aseguradora">
+                <option value="">Seleccionar aseguradora…</option>
+                <option value="HSBC">HSBC</option>
+                <option value="AXA">AXA</option>
+                <option value="BBVA">BBVA</option>
+                <option value="ZURICH">ZURICH</option>
+                <option value="INDEP">INDEP</option>
+                <option value="Seguros SURA">Seguros SURA</option>
+                <option value="LF">LF</option>
+                <option value="INDEEP">INDEEP</option>
+                <option value="BANOBRAS">BANOBRAS</option>
+                <option value="PAN AMERICAN MEXICO">PAN AMERICAN MEXICO</option>
+                <option value="BEST DOCTOR INSURANCE">BEST DOCTOR INSURANCE</option>
+                <option value="PREVEM SEGUROS">PREVEM SEGUROS</option>
+                <option value="OMA">OMA</option>
+                <option value="BANRURAL">BANRURAL</option>
+                <option value="METLIFE">METLIFE</option>
+              </select>
+            </div>
+        </section>
+
+<!-- DOMICILIO Y CONTACTO -->
         <section class="section">
           <div class="section-header">
             <div class="section-title">Domicilio y contacto</div>
@@ -613,58 +670,7 @@
           </div>
         </section>
 
-        <!-- RELIGIÓN, PAGO, CENTRO -->
-        <section class="section section-otros">
-          <div class="section-header">
-            <div class="section-title">Otros datos</div>
-          </div>
-          <div class="form-grid">
-            <div class="field full-width">
-              <label>Religión</label>
-              <div class="options-row">
-                <label class="chip"><input type="radio" name="religion" value="catolica"> Católica</label>
-                <label class="chip"><input type="radio" name="religion" value="cristiana"> Cristiana</label>
-                <label class="chip"><input type="radio" name="religion" value="evangelico"> Evangélico</label>
-                <label class="chip"><input type="radio" name="religion" value="ateismo"> Ateísmo</label>
-              </div>
-            </div>
-            <div class="field full-width">
-              <label for="nombre_acompanante">Nombre del acompañante</label>
-              <input type="text" id="nombre_acompanante" name="nombre_acompanante">
-            </div>
-            <div class="field">
-              <label for="cel_acompanante">Contacto del acompañante</label>
-              <input type="tel" id="contacto_acompanante" name="contacto_acompanante">
-            </div>
-            <div class="field">
-              <label>Forma de pago</label>
-              <div class="options-row">
-                <label class="chip"><input type="radio" name="forma_pago" value="bolsillo"> Pago de bolsillo</label>
-                <label class="chip"><input type="radio" name="forma_pago" value="aseguradora"> Aseguradora</label>
-              </div>
-            </div>
-            <div class="field full-width hidden" id="aseguradora-field">
-              <label for="aseguradora">Aseguradora</label>
-              <select id="aseguradora" name="aseguradora">
-                <option value="">Seleccionar aseguradora…</option>
-                <option value="HSBC">HSBC</option>
-                <option value="AXA">AXA</option>
-                <option value="BBVA">BBVA</option>
-                <option value="ZURICH">ZURICH</option>
-                <option value="INDEP">INDEP</option>
-                <option value="Seguros SURA">Seguros SURA</option>
-                <option value="LF">LF</option>
-                <option value="INDEEP">INDEEP</option>
-                <option value="BANOBRAS">BANOBRAS</option>
-                <option value="PAN AMERICAN MEXICO">PAN AMERICAN MEXICO</option>
-                <option value="BEST DOCTOR INSURANCE">BEST DOCTOR INSURANCE</option>
-                <option value="PREVEM SEGUROS">PREVEM SEGUROS</option>
-                <option value="OMA">OMA</option>
-                <option value="BANRURAL">BANRURAL</option>
-                <option value="METLIFE">METLIFE</option>
-              </select>
-            </div>
-        </section>
+        
 
         <!-- AVISO DE PRIVACIDAD -->
         <section class="section">
